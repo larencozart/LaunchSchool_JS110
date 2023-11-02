@@ -18,7 +18,6 @@ function union (array1, array2) {
     unifiedArray.push(elementToAppend);
   }
 
-  console.log(unifiedArray);
   return unifiedArray;
 }
 
