@@ -1,13 +1,18 @@
-let arr = [2, 11, 9, 4, 107, 21, 1];
+const ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+let realStaggeredCase = (string) => {
+  let count = -1;
+  return string
+    .split('')
+    .map(char => {
+      if (ALPHABET.includes(char)) {
+        count += 1;
+        return count % 2 === 0 ? char.toUpperCase() : char.toLowerCase();
+      }
+      return char;
+    })
+    .join('');
+};
 
-arr.sort((a, b) => {
-  if (a < b) {
-    return -1;
-  } else if (a > b) {
-    return 1;
-  } else {
-    return 0;
-  }
-}); // => [ 1, 2, 4, 9, 11, 21, 107 ]
-
-console.log(arr);
+console.log(realStaggeredCase('I Love Launch School!'));
+console.log(realStaggeredCase('ALL CAPS'));
+console.log(realStaggeredCase('ignore 77 the 444 numbers'));
