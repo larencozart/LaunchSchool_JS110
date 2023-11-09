@@ -253,3 +253,106 @@ let colorAndSizeArr14 = Object.values(obj14)
 console.log(colorAndSizeArr14);
 
 // problem 15
+// Given the following data structure, write some code to return
+// an array which contains only the objects where all the numbers are even.
+
+let arr15 = [
+  { a: [1, 2, 3] },
+  { b: [2, 4, 6], c: [3, 6], d: [4] },
+  { e: [8], f: [6, 10] },
+];
+
+let evenObjs = arr15.filter(obj => {
+  return Object.values(obj).flat().every(val => val % 2 === 0);
+});
+
+console.log(evenObjs);
+
+// problem 16
+// Given the following data structure, write some code that
+// defines an object where the key is the first item in each
+// subarray, and the value is the second.
+
+// expected value of object
+// { a: 1, b: 'two', sea: { c: 3 }, D: [ 'a', 'b', 'c' ] }
+
+let arr16 = [['a', 1], ['b', 'two'], ['sea', {c: 3}], ['D', ['a', 'b', 'c']]];
+
+let obj16 = Object.fromEntries(arr16);
+console.log(obj16);
+
+
+// problem 17
+// A UUID is a type of identifier often used to uniquely identify items,
+// even when some of those items were created on a different server or by
+// a different application. That is, without any synchronization, two or
+// more computer systems can create new items and label them with a UUID
+// with no significant risk of stepping on each other's toes. It accomplishes
+// this feat through massive randomization. The number of possible UUID
+// values is approximately 3.4 X 10E38, which is a huge number. The chance
+// of a conflict is vanishingly small with such a large number of possible
+// values.
+
+// Each UUID consists of 32 hexadecimal characters
+// (the digits 0-9 and the letters a-f) represented as a string. The value
+// is typically broken into 5 sections in an 8-4-4-4-12 pattern,
+// e.g., 'f65c57f6-a6aa-17a8-faa1-a67f2dc9fa91'.
+
+// Write a function that takes no arguments and returns a string that contains
+// a UUID.
+
+function createUUID() {
+  const HEXADECIMALS = 'abcdef0123456789';
+  const sections = [8, 4, 4, 4, 12];
+
+  const uuid = sections.map(sectionNum => {
+    let uniqueStr = '';
+
+    for (let idx = 1; idx <= sectionNum; idx += 1) {
+      const randomIndex = Math.floor(Math.random() * HEXADECIMALS.length);
+      uniqueStr += HEXADECIMALS[randomIndex];
+    }
+
+    return uniqueStr;
+  });
+
+  return uuid.join('-');
+}
+
+console.log(createUUID());
+
+// extra problems from JS119 study session
+// 1
+// Given a sentence return an array containing the words transformed
+// to the maximum number consecutive consonants in it. Only transform
+// words that are in ODD indexed positions.
+
+/*
+Seperate a string into words and transform the individual words into
+an array of numbers representing each words highest count of consecutive
+consonants
+*/
+
+// Hello World --> [2, 3]
+ 
+//'Hello World'.split('').filter(element, index) => { return index % 2 !== 0})
+
+// 2
+// Given a paragraph, return true if any 3 consecutive sentences 
+// start with the same word. 
+
+// You are cute. Hello World. You are happy. You are sad. --> False
+// You are cute. Hello World. You are happy. You are sad. You are smiling.
+// Hello again. --> True
+
+
+/*
+Seperate a paragraph into an array of the sentences, iterate through
+// the words, returning a
+boolean if 3 consective sentences begin with the same word.
+
+1. **Group Consecutive Sentences**: Group three consecutive sentences.
+2. **Return True if Condition Met**: Return true if any such group
+// of three consecutive sentences starts with the same word; otherwise,
+// return false.
+*/
