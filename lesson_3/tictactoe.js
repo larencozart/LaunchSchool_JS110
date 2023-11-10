@@ -12,7 +12,7 @@ function prompt(message) {
 }
 
 function displayBoard(board) {
-  console.log(`You are ${PLAYER_MARKER}. Computer is ${COMPUTER_MARKER}.`);
+  console.log(`(You are ${PLAYER_MARKER}. Computer is ${COMPUTER_MARKER}.)`);
 
   console.log('');
   console.log('     |     |');
@@ -92,13 +92,13 @@ function findWinner(board) {
     if (board[sq1] === PLAYER_MARKER &&
         board[sq2] === PLAYER_MARKER &&
         board[sq3] === PLAYER_MARKER) {
-      winner = 'Player';
+      winner = 'player';
     }
 
     if (board[sq1] === COMPUTER_MARKER &&
         board[sq2] === COMPUTER_MARKER &&
         board[sq3] === COMPUTER_MARKER) {
-      winner = 'Computer';
+      winner = 'computer';
     }
   }
 
@@ -111,16 +111,28 @@ function isBoardFull(board) {
 
 function displayGameResult(board) {
   if (isGameWon(board)) {
-    prompt(`${findWinner(board)} won!`);
+    let gameWinner = findWinner(board);
+    if (gameWinner === 'player') {
+      prompt('You won this game!\n');
+    } else if (gameWinner) {
+      prompt('The computer won this game!\n');
+    }
   } else {
-    prompt("It's a tie!");
+    prompt("This game is a tie!\n");
   }
 }
 
-function playGame() {
+// currently displaying and returning the winner? should i change this?
+function playSingleGame(scoreObj) {
   let board = initializeBoard();
 
   while (true) {
+    console.clear();
+
+    if (scoreObj) {
+      displayCurrentScore(scoreObj);
+    }
+
     displayBoard(board);
 
     playerChoosesSquare(board);
@@ -129,15 +141,60 @@ function playGame() {
     computerChoosesSquare(board);
     if (isGameWon(board) || isBoardFull(board)) break;
 
+  }
+
+  console.clear();
+  displayBoard(board);
+  displayGameResult(board);
+
+  return findWinner(board);
+}
+
+function isMatchWon(scoreObj, winCondition) {
+  return scoreObj.player === winCondition ||
+         scoreObj.computer === winCondition;
+}
+
+function displayCurrentScore(score) {
+  console.log('===== SCORE =====');
+  console.log(`You: ${score.player}, Computer: ${score.computer}\n`);
+}
+
+function findMatchWinner(score, winCondition) {
+  if (score.player === winCondition) return 'player';
+  else if (score.computer === winCondition) return 'computer';
+  else return 'ERROR at findMatchWinner()';
+}
+
+function displayMatchResult(winner) {
+  console.log('===== MATCH RESULT =====');
+  if (winner === 'player') {
+    console.log('YOU WON THE MATCH! FANTASTIC JOB!\n');
+  } else {
+    console.log('The computer won the match. Better luck next time!');
+  }
+}
+
+function playMatchGame() {
+  const MATCH_WINNING_SCORE = 5;
+  let scores = { player : 0, computer : 0};
+
+  while (true) {
+    let currentWinner = playSingleGame(scores);
+    scores[currentWinner] += 1; // updates score obj-> so small, decided not to create helper function
+
+    if (isMatchWon(scores, MATCH_WINNING_SCORE)) break;
+
     console.clear();
   }
 
-  displayBoard(board);
-  displayGameResult(board);
+  const matchWinner = findMatchWinner(scores, MATCH_WINNING_SCORE);
+  displayMatchResult(matchWinner);
 }
 
 function playAgain() {
   prompt('Want to play again? (y/n): ');
+
   let response = rls.question().trim().toLowerCase();
   while (!['y', 'n'].includes(response)) {
     prompt('Please only enter "y" (to play again) or "n" (to exit): ');
@@ -147,17 +204,51 @@ function playAgain() {
   return response === 'y';
 }
 
+function playerChoosesGameStyle() {
+  prompt('Please choose your game style');
+  prompt('Enter "s" for a single game, or "m" for a match: ');
+
+  let response = rls.question().trim().toLowerCase();
+  while (!['s', 'm'].includes(response)) {
+    prompt('Please enter "s" (single game) or "m" (match) for your choice: ');
+    response = rls.question().trim().toLowerCase();
+  }
+
+  return response;
+}
+
+function displayRules(gameStyle) {
+  if (gameStyle === 's') {
+    console.log('\n===== SINGLE GAME RULES =====');
+    console.log('The first player to mark 3 squares in a row, column or diagonal wins the game.\n');
+  } else if (gameStyle === 'm') {
+    console.log('\n===== MATCH RULES =====');
+    console.log('The first player to win 5 games of Tic-Tac-Toe wins the match.\n');
+  }
+
+  prompt('Once you have read the rules, enter any key to begin.');
+  rls.question();
+}
+
 function runGameEngine() {
   while (true) {
     console.clear();
-    prompt("Welcome to Tic-Tac-Toe!\n=> First player to get 3 marks in a row, column, or diagonal wins!\n=> Let's start!\n");
-    playGame();
+    prompt("Welcome to Tic-Tac-Toe!");
+    let chosenGameStyle = playerChoosesGameStyle();
+
+    displayRules(chosenGameStyle);
+
+    // could extract if statement to separate function
+    if (chosenGameStyle === 's') {
+      playSingleGame();
+    } else {
+      playMatchGame();
+    }
 
     if (playAgain() === false) break;
   }
 
   prompt("Thanks for playing Tic-Tac-Toe! See you another time!");
 }
-
 
 runGameEngine();
