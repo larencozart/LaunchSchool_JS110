@@ -43,11 +43,21 @@ function emptySquares(board) {
   return Object.keys(board).filter(key => board[key] === INITIAL_MARKER);
 }
 
+function joinOr(array, delimiter = ', ', finalConjunction = 'or') {
+  if (array.length <= 1) return String(array);
+  else if (array.length === 2) return `${array[0]} ${finalConjunction} ${array[1]}`;
+  else {
+    const strWithoutConj = array.slice(0, -1).reduce((accum, el) => accum + el + delimiter, '');
+    return `${strWithoutConj}${finalConjunction} ${array.slice(-1)}`;
+  }
+}
+
 function playerChoosesSquare(board) {
   let square;
 
   while (true) {
-    prompt(`Choose a square (${emptySquares(board).join(', ')}): `);
+    const squareOptions = joinOr(emptySquares(board));
+    prompt(`Choose a square (${squareOptions}): `);
     square = rls.question().trim();
 
     if (emptySquares(board).includes(square)) break;
