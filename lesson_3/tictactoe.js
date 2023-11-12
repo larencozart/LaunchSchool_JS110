@@ -6,6 +6,8 @@ const rls = require('readline-sync');
 const INITIAL_MARKER = ' ';
 const PLAYER_MARKER = 'X';
 const COMPUTER_MARKER = 'O';
+const WINNING_COMBOS = [[1, 2, 3], [4, 5, 6], [7, 8, 9],
+  [1, 4, 7], [2, 5, 8], [3, 6, 9], [1, 5, 9], [3, 5, 7]];
 
 function prompt(message) {
   console.log(`=> ${message}`);
@@ -68,9 +70,42 @@ function playerChoosesSquare(board) {
   board[square] = PLAYER_MARKER;
 }
 
+function isDefensiveMovePresent(board) {
+  let square = null;
+
+  for (let combo = 0; combo < WINNING_COMBOS.length; combo += 1) {
+    let [ sq1, sq2, sq3 ] = WINNING_COMBOS[combo];
+    if (board[sq1] === PLAYER_MARKER
+        && board[sq2] === PLAYER_MARKER
+        && board[sq3] === INITIAL_MARKER) {
+      square = sq3;
+      break;
+    } else if (board[sq1] === PLAYER_MARKER
+               && board[sq3] === PLAYER_MARKER
+               && board[sq2] === INITIAL_MARKER) {
+      square = sq2;
+      break;
+    } else if (board[sq2] === PLAYER_MARKER
+               && board[sq3] === PLAYER_MARKER
+               && board[sq1] === INITIAL_MARKER) {
+      square = sq1;
+      break;
+    }
+  }
+
+  return square;
+}
+
 function computerChoosesSquare(board) {
-  let randomIndex = Math.floor(Math.random() * emptySquares(board).length);
-  let square = emptySquares(board)[randomIndex];
+  let square;
+
+  let defensiveMove = isDefensiveMovePresent(board);
+  if (defensiveMove) {
+    square = defensiveMove;
+  } else {
+    let randomIndex = Math.floor(Math.random() * emptySquares(board).length);
+    square = emptySquares(board)[randomIndex];
+  }
 
   board[square] = COMPUTER_MARKER;
 }
@@ -82,12 +117,9 @@ function isGameWon(board) {
 function findWinner(board) {
   let winner = null;
 
-  let winningCombos = [[1, 2, 3], [4, 5, 6], [7, 8, 9],
-    [1, 4, 7], [2, 5, 8], [3, 6, 9], [1, 5, 9], [3, 5, 7]];
+  for (let combo = 0; combo < WINNING_COMBOS.length; combo += 1) {
 
-  for (let combo = 0; combo < winningCombos.length; combo += 1) {
-
-    let [ sq1, sq2, sq3 ] = winningCombos[combo];
+    let [ sq1, sq2, sq3 ] = WINNING_COMBOS[combo];
 
     if (board[sq1] === PLAYER_MARKER &&
         board[sq2] === PLAYER_MARKER &&
