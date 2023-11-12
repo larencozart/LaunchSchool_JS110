@@ -70,6 +70,7 @@ function playerChoosesSquare(board) {
   board[square] = PLAYER_MARKER;
 }
 
+// eslint-disable-next-line max-lines-per-function
 function isDefensiveMovePresent(board) {
   let square = null;
 
